@@ -1,5 +1,8 @@
 import express from "express";
 import prisma from "./prisma";
+import validator from "validator";
+import { Prisma } from "@prisma/client";
+import userRouter from "./routes/UserRoutes";
 
 const app = express();
 
@@ -14,16 +17,4 @@ if (prisma) {
   console.error("Cant Connect to db");
 }
 
-app.get("/", (req, res) => {
-  const user = prisma.user
-    .create({
-      data: {
-        name: "Ali Soliman",
-        email: "hello21",
-      },
-    })
-    .then((user) => {
-      console.log(user);
-    })
-    .catch(console.log);
-});
+app.use("/user", userRouter);
