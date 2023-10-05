@@ -1,9 +1,8 @@
 import { Request, Response } from "express";
-import { Prisma } from "@prisma/client";
-import prisma from "../prisma";
+import { successResponse, errorResponse } from "@/statics/responses";
+import prisma from "@/prisma";
 import validator from "validator";
 import bcrypt from "bcrypt";
-import { equal } from "assert";
 
 const createNewUser = async (req: Request, res: Response) => {
   const body = req.body;
@@ -21,7 +20,7 @@ const createNewUser = async (req: Request, res: Response) => {
     console.log(error);
   }
 };
-
+// Make The login create token in the database
 const login = async (req: Request, res: Response) => {
   const body = req.body;
   const username = body.username,
@@ -33,8 +32,23 @@ const login = async (req: Request, res: Response) => {
       OR: [{ email }, { username }],
     },
   });
-  console.log(user);
-  res.json(user);
+  if (user) {
+    bcrypt.compare(password, user.password, (err, same) => {
+      if (err) {
+        res
+          .status(406)
+          .json(errorResponse(null, "Failed To Compare Passwords"));
+      } else if (same) {
+        res.status(202).json(successResponse(user, "Logged In Successfully"));
+      } else {
+        res.status(401).json(errorResponse(null, "Password is incorrect"));
+      }
+    });
+  } else {
+    res
+      .status(400)
+      .json(errorResponse(null, "Username or Email are incorrect"));
+  }
 };
 
 export default { createNewUser, login };

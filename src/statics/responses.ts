@@ -3,14 +3,14 @@ function successResponse<T>(
   message: string = "Response is ready",
   status: string = "success"
 ): ResponseType<T> {
-  return response(data, message, status);
+  return response<T>(data, message, status);
 }
 function errorResponse<T>(
   data: T,
   message: string = "Error occured",
   status: string = "failed"
 ): ResponseType<T> {
-  return response(data, message, status);
+  return response<T>(data, message, status);
 }
 
 function response<T>(
@@ -30,4 +30,4 @@ interface ResponseType<T> {
   message: string;
   status: string;
 }
-export default { successResponse, errorResponse };
+export { successResponse, errorResponse };

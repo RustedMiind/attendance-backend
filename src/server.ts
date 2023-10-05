@@ -1,8 +1,8 @@
 import express from "express";
-import prisma from "./prisma";
+import prisma from "@/prisma";
 import validator from "validator";
 import { Prisma } from "@prisma/client";
-import userRouter from "./routes/UserRoutes";
+import userRouter from "@/routes/UserRoutes";
 
 const app = express();
 
