@@ -3,7 +3,7 @@ import { successResponse, errorResponse } from "@/statics/responses";
 import prisma from "@/prisma";
 import validator from "validator";
 import bcrypt from "bcrypt";
-import { createToken, updateToken } from "./createToken";
+import { token } from "./createToken";
 
 const createNewUser = async (req: Request, res: Response) => {
   const body = req.body;
@@ -15,13 +15,20 @@ const createNewUser = async (req: Request, res: Response) => {
   data.password = hashed;
   try {
     const user = await prisma.user.create({ data });
-    res.json(user);
+    res.status(202).json(user);
   } catch (error) {
-    res.json(error);
+    res.status(401).json(error);
     console.log(error);
   }
 };
-// Make The login create token in the database
+
+/*
+Login Logic :
+  if username or email with the password are correct
+    if token exist update it, if not create new one
+  Any Action requires login, will use that token,
+  the token containes hashed token id
+*/
 const login = async (req: Request, res: Response) => {
   const body = req.body;
   const username = body.username,
@@ -45,9 +52,9 @@ const login = async (req: Request, res: Response) => {
       } else if (same) {
         let userWithToken;
         if (user.userToken) {
-          userWithToken = await updateToken(user.id);
+          userWithToken = await token(user.id, "update");
         } else {
-          userWithToken = await createToken(user.id);
+          userWithToken = await token(user.id);
         }
         res
           .status(202)
