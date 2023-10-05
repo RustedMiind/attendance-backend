@@ -1,8 +1,7 @@
+import "module-alias/register";
 import express from "express";
-import prisma from "@/prisma";
-import validator from "validator";
-import { Prisma } from "@prisma/client";
 import userRouter from "@/routes/UserRoutes";
+import prisma from "@/prisma";
 
 const app = express();
 

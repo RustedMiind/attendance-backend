@@ -3,6 +3,7 @@ import { successResponse, errorResponse } from "@/statics/responses";
 import prisma from "@/prisma";
 import validator from "validator";
 import bcrypt from "bcrypt";
+import { createToken, updateToken } from "./createToken";
 
 const createNewUser = async (req: Request, res: Response) => {
   const body = req.body;
@@ -31,15 +32,26 @@ const login = async (req: Request, res: Response) => {
     where: {
       OR: [{ email }, { username }],
     },
+    include: {
+      userToken: true,
+    },
   });
   if (user) {
-    bcrypt.compare(password, user.password, (err, same) => {
+    bcrypt.compare(password, user.password, async (err, same) => {
       if (err) {
         res
           .status(406)
           .json(errorResponse(null, "Failed To Compare Passwords"));
       } else if (same) {
-        res.status(202).json(successResponse(user, "Logged In Successfully"));
+        let userWithToken;
+        if (user.userToken) {
+          userWithToken = await updateToken(user.id);
+        } else {
+          userWithToken = await createToken(user.id);
+        }
+        res
+          .status(202)
+          .json(successResponse(userWithToken, "Logged In Successfully"));
       } else {
         res.status(401).json(errorResponse(null, "Password is incorrect"));
       }

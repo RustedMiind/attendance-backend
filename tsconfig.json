@@ -5,9 +5,9 @@
     "strict": true,
     "lib": ["esnext"],
     "esModuleInterop": true,
-    // "baseUrl": "./src",
+    "baseUrl": "./src",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["*"]
     }
   }
 }

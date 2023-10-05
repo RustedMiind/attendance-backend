@@ -3,8 +3,11 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "_moduleAliases": {
+    "@": "./src"
+  },
   "scripts": {
-    "dev": "nodemon server.ts"
+    "dev": "nodemon ./src/server.ts"
   },
   "keywords": [],
   "author": "",
@@ -23,6 +26,7 @@
     "bcrypt": "^5.1.1",
     "express": "^4.18.2",
     "jsonwebtoken": "^9.0.2",
+    "module-alias": "^2.2.3",
     "validator": "^13.11.0"
   }
 }
