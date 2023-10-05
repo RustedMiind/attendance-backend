@@ -29,6 +29,7 @@ Login Logic :
   Any Action requires login, will use that token,
   the token containes hashed token id
 */
+// User Token expires in 2 days
 const login = async (req: Request, res: Response) => {
   const body = req.body;
   const username = body.username,
