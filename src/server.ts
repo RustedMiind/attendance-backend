@@ -2,7 +2,8 @@ import * as dotenv from "dotenv";
 dotenv.config();
 import "module-alias/register";
 import express from "express";
-import userRouter from "@/routes/UserRoutes";
+import userRoutes from "@/routes/UserRoutes";
+import roleRoutes from "@/routes/RolesRoutes";
 import prisma from "@/prisma";
 
 const app = express();
@@ -18,4 +19,5 @@ if (prisma) {
   console.error("Cant Connect to db");
 }
 
-app.use("/user", userRouter);
+app.use("/user", userRoutes);
+app.use("/role", roleRoutes);

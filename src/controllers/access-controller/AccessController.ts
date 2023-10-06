@@ -20,9 +20,8 @@ export function createAccess(
   value: number,
   actionName: ActionNameType
 ) {
-  let filterObj: FilterObjType = { value };
-
   return new Promise((ressolve, reject) => {
+    let filterObj: FilterObjType = { value };
     prisma.access
       .findFirst({
         where: {
@@ -35,7 +34,6 @@ export function createAccess(
         },
       })
       .then((access) => {
-        // Check if access contains the value in name or value
         if (access) {
           ressolve(access);
         } else {
@@ -53,10 +51,18 @@ export function createAccess(
                   },
                 },
               },
+              include: { action: true },
             })
-            .then(ressolve)
-            .catch(reject);
+            .then((access) => {
+              ressolve(access);
+            })
+            .catch(() => {
+              reject({ nigga: "nigga" });
+            });
         }
+      })
+      .catch(() => {
+        reject({ nigga: "nigga2" });
       });
   });
 }
