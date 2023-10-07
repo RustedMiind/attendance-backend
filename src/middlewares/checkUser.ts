@@ -1,7 +1,9 @@
 import prisma from "@/prisma";
 import { errorResponse } from "@/statics/responses";
+import { Prisma } from "@prisma/client";
 import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
+import { UserWithRoleResult } from "@/types/UserTypes";
 
 /*
   Get the token from the header named "Authorization"
@@ -33,7 +35,7 @@ router.post("/path", (req: Request, res: Response) => {
 function checkIsUserWithCallback(
   req: Request,
   res: Response,
-  callback: (v: unknown | null) => unknown
+  callback: (v: UserWithRoleResult) => unknown
 ) {
   checkUser(req.headers.authorization)
     .then((result) => {
@@ -45,7 +47,7 @@ function checkIsUserWithCallback(
 }
 
 function checkUser(token: string | undefined) {
-  return new Promise((ressolve, reject) => {
+  return new Promise<UserWithRoleResult>((ressolve, reject) => {
     if (!token) return reject(errorResponse({}, "No token found"));
 
     let decode: { id: string } | undefined;
@@ -63,6 +65,9 @@ function checkUser(token: string | undefined) {
                 .findFirst({
                   where: {
                     id: userToken.userId,
+                  },
+                  include: {
+                    role: { include: { accesses: true } },
                   },
                 })
                 .then((user) => {
