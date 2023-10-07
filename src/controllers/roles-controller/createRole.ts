@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { successResponse, errorResponse } from "@/statics/responses";
 import prisma from "@/prisma";
+import idsArrayToAccessObj from "./idsArrayToAccessObj";
 
 type AccessIdType = number;
 
@@ -14,11 +15,7 @@ function createRoleFunction(req: Request, res: Response) {
         data: {
           name,
           accesses: {
-            connect: accesses.map((accessId) => {
-              return {
-                id: accessId,
-              };
-            }),
+            connect: idsArrayToAccessObj(accesses),
           },
         },
         include: {
