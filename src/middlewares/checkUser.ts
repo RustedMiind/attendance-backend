@@ -67,7 +67,9 @@ function checkUser(token: string | undefined) {
                     id: userToken.userId,
                   },
                   include: {
-                    role: { include: { accesses: true } },
+                    role: {
+                      include: { accesses: { include: { action: true } } },
+                    },
                   },
                 })
                 .then((user) => {

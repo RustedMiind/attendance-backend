@@ -2,7 +2,7 @@ import { Prisma } from "@prisma/client";
 import { type } from "os";
 
 type UserWithRole = Prisma.UserGetPayload<{
-  include: { role: { include: { accesses: true } } };
+  include: { role: { include: { accesses: { include: { action: true } } } } };
 }>;
 type UserWithRoleResult = UserWithRole | null;
 
