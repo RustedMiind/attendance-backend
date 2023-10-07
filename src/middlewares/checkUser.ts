@@ -33,10 +33,12 @@ router.post("/path", (req: Request, res: Response) => {
 function checkIsUserWithCallback(
   req: Request,
   res: Response,
-  callback: (v: unknown) => unknown
+  callback: (v: unknown | null) => unknown
 ) {
   checkUser(req.headers.authorization)
-    .then(callback)
+    .then((result) => {
+      callback(result);
+    })
     .catch((err) => {
       res.json(errorResponse(err, "No token found"));
     });
@@ -63,8 +65,12 @@ function checkUser(token: string | undefined) {
                     id: userToken.userId,
                   },
                 })
-                .then(ressolve)
-                .catch(reject);
+                .then((user) => {
+                  ressolve(user);
+                })
+                .catch((err) => {
+                  reject(err);
+                });
             } else {
               reject(userToken);
             }
