@@ -1,5 +1,6 @@
 import { ActionNameType } from "@/types/ActionNameType";
-import { PrismaClient } from "@prisma/client";
+import { AccessesNamesType } from "../src/types/AccessesNamesType";
+import { Prisma, PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 type actionType = {
@@ -20,11 +21,38 @@ const actionsData: actionType[] = [
     value: 2,
   },
 ];
+const accessesNames: AccessesNamesType[] = ["access", "role", "user_data"];
+const actionValues = [0, 1, 2];
 
-function main() {
+function seedActions() {
+  return new Promise((ressolve, reject) => {
+    prisma.action
+      .createMany({ data: actionsData })
+      .then((result) => {
+        ressolve(result);
+      })
+      .catch((err) => {
+        reject(err);
+      });
+  });
+}
+function seedAccesses() {
   prisma.action
-    .createMany({ data: actionsData })
-    .then(console.log)
+    .findMany()
+    .then((actions) => {
+      const actionIds = actions.map((action) => action.id);
+      const accessesData: Prisma.AccessCreateManyInput[] = [];
+      accessesNames.forEach((access) => {
+        const tempArr = [];
+        actionIds.forEach((actionId) => {
+          accessesData.push({ name: access, actionId });
+        });
+      });
+      prisma.access
+        .createMany({ data: accessesData })
+        .then(console.log)
+        .catch(console.log);
+    })
     .catch(console.log);
 }
-main();
+seedActions().then(seedAccesses);
