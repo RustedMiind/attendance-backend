@@ -27,6 +27,9 @@ function checkAccess(accessName: string, actionValue: 0 | 1 | 2) {
                 hasAccess = true;
               }
             });
+          }
+          if (hasAccess) {
+            next();
           } else {
             res.status(403).json(errorResponse({}, "Access Denied"));
           }
@@ -35,3 +38,5 @@ function checkAccess(accessName: string, actionValue: 0 | 1 | 2) {
     );
   };
 }
+
+export { checkAccess };
