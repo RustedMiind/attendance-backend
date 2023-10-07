@@ -57,12 +57,12 @@ export function createAccess(
               ressolve(access);
             })
             .catch(() => {
-              reject({ nigga: "nigga" });
+              reject(errorResponse({}, "Error Creating Access"));
             });
         }
       })
       .catch(() => {
-        reject({ nigga: "nigga2" });
+        reject(errorResponse({}, "Error Creating Access"));
       });
   });
 }
