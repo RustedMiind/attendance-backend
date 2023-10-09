@@ -5,8 +5,18 @@ import express from "express";
 import userRoutes from "@/routes/UserRoutes";
 import roleRoutes from "@/routes/RolesRoutes";
 import prisma from "@/prisma";
+import cors from "cors";
 
 const app = express();
+
+app.use(
+  cors({
+    preflightContinue: true,
+    origin: ["http://192.168.1.9:3000", "http://localhost:3000"],
+    credentials: true,
+    allowedHeaders: ["Content-Type", "Authorization", "x-csrf-token"],
+  })
+);
 
 // Middlewares :
 app.use(express.json());
