@@ -12,7 +12,6 @@ const app = express();
 
 app.use(
   cors({
-    preflightContinue: true,
     origin: ["http://192.168.1.9:3000", "http://localhost:3000"],
     credentials: true,
     allowedHeaders: ["Content-Type", "Authorization", "x-csrf-token"],
