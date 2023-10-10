@@ -59,6 +59,8 @@ function checkUser(req: Request, res: Response) {
                       )
                     );
                 });
+            } else {
+              res.status(404).json(errorResponse(undefined, "Token not found"));
             }
           })
           .catch((err) => {
