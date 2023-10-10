@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { successResponse, errorResponse } from "@/statics/responses";
 import prisma from "@/prisma";
-import idsArrayToAccessObj from "./idsArrayToAccessObj";
+import { idsArrayToAccessObj } from "./idsArrayToAccessObj";
 
 type AccessIdType = number;
 
