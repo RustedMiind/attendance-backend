@@ -10,7 +10,7 @@ router.post("/new", userController.createNewUser);
 router.post("/login", userController.login);
 router.get("/check", userController.checkUserByToken);
 router.post("/role/assign", userController.assignRole);
-router.post("/test", checkAccess("kill", 1), (req: Request, res: Response) => {
+router.post("/test", checkAccess("role", 1), (req: Request, res: Response) => {
   res.json("he does have access");
 });
 export default router;

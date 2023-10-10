@@ -4,8 +4,9 @@ import { NextFunction, Request, Response } from "express";
 import { checkIsUserWithCallback } from "./checkUser";
 import { UserWithRoleResult } from "@/types/UserTypes";
 import { errorResponse } from "@/statics/responses";
+import { AccessesNamesType } from "@/types/AccessesNamesType";
 
-function checkAccess(accessName: string, actionValue: 0 | 1 | 2) {
+function checkAccess(accessName: AccessesNamesType, actionValue: 0 | 1 | 2) {
   return function (req: Request, res: Response, next: NextFunction) {
     checkIsUserWithCallback(
       req,
