@@ -42,7 +42,7 @@ function checkIsUserWithCallback(
       callback(result);
     })
     .catch((err) => {
-      res.json(errorResponse(err, "No token found"));
+      res.status(400).json(errorResponse(err, "No token found"));
     });
 }
 

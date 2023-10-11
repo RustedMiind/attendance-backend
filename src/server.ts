@@ -23,7 +23,8 @@ app.use(express.json());
 if (prisma) {
   app.listen(process.env.PORT);
   console.log(
-    "||||||||||||  LISTENING ON http://localhost:3100/  ||||||||||||"
+    (("||||||||||||  LISTENING ON http://localhost:{" +
+      process.env.PORT) as string) + "}/  ||||||||||||"
   );
 } else {
   console.error("Cant Connect to db");
