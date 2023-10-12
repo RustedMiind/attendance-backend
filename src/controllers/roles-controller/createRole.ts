@@ -1,25 +1,25 @@
 import { Request, Response } from "express";
 import { successResponse, errorResponse } from "@/statics/responses";
 import prisma from "@/prisma";
-import { idsArrayToAccessObj } from "./idsArrayToAccessObj";
+import { idsArrayToPermissionObj } from "./idsArrayToPermissionObj";
 
-type AccessIdType = number;
+type PermissionIdType = number;
 
 function createRoleFunction(req: Request, res: Response) {
   let name: string | null = req.body.name,
-    accesses: AccessIdType[] | null = req.body.accesses;
+    permissions: PermissionIdType[] | null = req.body.permissions;
 
-  if (name && accesses) {
+  if (name && permissions) {
     prisma.role
       .create({
         data: {
           name,
-          accesses: {
-            connect: idsArrayToAccessObj(accesses),
+          permissions: {
+            connect: idsArrayToPermissionObj(permissions),
           },
         },
         include: {
-          accesses: {
+          permissions: {
             include: { action: { select: { value: true, name: true } } },
           },
         },

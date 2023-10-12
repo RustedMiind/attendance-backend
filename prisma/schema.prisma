@@ -27,7 +27,7 @@ model UserToken{
   userId String @unique
 }
 
-model Access{
+model Permission{
   id Int @id @default(autoincrement()) 
   name String
   action Action @relation(fields: [actionId],references: [id])
@@ -40,12 +40,12 @@ model Action{
   id Int @id @default(autoincrement())
   name String @unique
   value Int @unique
-  access Access[]
+  permission Permission[]
 }
 
 model Role{
   id String @id @default(uuid()) 
   name String @unique
-  accesses Access[]
+  permissions Permission[]
   users User[]
 }

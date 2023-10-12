@@ -6,14 +6,14 @@ import { ActionNameType } from "@/types/ActionNameType";
 import { equal } from "assert";
 import checkValueObjectArr from "@/functions/checkValueObjectArr";
 
-export function createAccessFunction(
+export function createPermissionFunction(
   name: string,
   value: number,
   actionName: ActionNameType
 ) {
   return new Promise((ressolve, reject) => {
     let filterObj: FilterObjType = { value };
-    prisma.access
+    prisma.permission
       .findFirst({
         where: {
           name,
@@ -24,11 +24,11 @@ export function createAccessFunction(
           action: true,
         },
       })
-      .then((access) => {
-        if (access) {
-          ressolve(access);
+      .then((permission) => {
+        if (permission) {
+          ressolve(permission);
         } else {
-          prisma.access
+          prisma.permission
             .create({
               data: {
                 name,
@@ -44,16 +44,16 @@ export function createAccessFunction(
               },
               include: { action: true },
             })
-            .then((access) => {
-              ressolve(access);
+            .then((permission) => {
+              ressolve(permission);
             })
             .catch(() => {
-              reject(errorResponse({}, "Error Creating Access"));
+              reject(errorResponse({}, "Error Creating Permission"));
             });
         }
       })
       .catch(() => {
-        reject(errorResponse({}, "Error Creating Access"));
+        reject(errorResponse({}, "Error Creating Permission"));
       });
   });
 }

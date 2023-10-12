@@ -68,7 +68,7 @@ function checkUser(token: string | undefined) {
                   },
                   include: {
                     role: {
-                      include: { accesses: { include: { action: true } } },
+                      include: { permissions: { include: { action: true } } },
                     },
                   },
                 })

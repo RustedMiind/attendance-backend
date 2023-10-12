@@ -4,35 +4,38 @@ import { NextFunction, Request, Response } from "express";
 import { checkIsUserWithCallback } from "./checkUser";
 import { UserWithRoleResult } from "@/types/UserTypes";
 import { errorResponse } from "@/statics/responses";
-import { AccessesNamesType } from "@/types/AccessesNamesType";
+import { PermissionNamesType } from "@/types/PermissionNamesType";
 
-function checkAccess(accessName: AccessesNamesType, actionValue: 0 | 1 | 2) {
+function checkpermission(
+  permissionName: PermissionNamesType,
+  actionValue: 0 | 1 | 2
+) {
   return function (req: Request, res: Response, next: NextFunction) {
     checkIsUserWithCallback(
       req,
       res,
       function callback(user: UserWithRoleResult) {
-        // Check if the role that the user has contains the required access or not
-        let hasAccess = false;
+        // Check if the role that the user has contains the required permission or not
+        let haspermission = false;
 
         if (user) {
           if (user.role === null && actionValue === 0) {
             next();
             return;
           } else if (user.role) {
-            user.role.accesses.forEach((access) => {
+            user.role.permissions.forEach((permission) => {
               if (
-                access.name === accessName &&
-                access.action.value >= actionValue
+                permission.name === permissionName &&
+                permission.action.value >= actionValue
               ) {
-                hasAccess = true;
+                haspermission = true;
               }
             });
           }
-          if (hasAccess) {
+          if (haspermission) {
             next();
           } else {
-            res.status(403).json(errorResponse({}, "Access Denied"));
+            res.status(403).json(errorResponse({}, "permission Denied"));
           }
         }
       }
@@ -40,4 +43,4 @@ function checkAccess(accessName: AccessesNamesType, actionValue: 0 | 1 | 2) {
   };
 }
 
-export { checkAccess };
+export { checkpermission };

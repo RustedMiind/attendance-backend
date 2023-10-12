@@ -1,22 +1,22 @@
 import { Request, Response } from "express";
 import { successResponse, errorResponse } from "@/statics/responses";
 import prisma from "@/prisma";
-import { idsArrayToAccessObj } from "./idsArrayToAccessObj";
+import { idsArrayToPermissionObj } from "./idsArrayToPermissionObj";
 
-type AccessIdType = number;
+type permissionIdType = number;
 
 function updateRoleFunction(req: Request, res: Response) {
   let id: string | null = req.body.id,
-    accesses: AccessIdType[] | null = req.body.accesses;
+    permissions: permissionIdType[] | null = req.body.permissions;
 
-  if (id && accesses) {
-    const newAccesses = idsArrayToAccessObj(accesses);
+  if (id && permissions) {
+    const newpermissions = idsArrayToPermissionObj(permissions);
     prisma.role
       .update({
         where: { id },
         data: {
-          accesses: {
-            set: newAccesses,
+          permissions: {
+            set: newpermissions,
           },
         },
       })

@@ -4,7 +4,7 @@ import prisma from "@/prisma";
 
 function getAllRolesFunction(req: Request, res: Response) {
   prisma.role
-    .findMany({ include: { accesses: true } })
+    .findMany({ include: { permissions: true } })
     .then((roles) => {
       res
         .status(200)

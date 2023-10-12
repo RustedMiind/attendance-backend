@@ -1,14 +1,15 @@
 import { Request, Response } from "express";
 import { successResponse, errorResponse } from "@/statics/responses";
 import prisma from "@/prisma";
-import { access } from "fs";
 import { removeDuplicates } from "@/functions/removeDuplicates";
 
-export function getAccessesNamesFunction(req: Request, res: Response) {
-  prisma.access
+export function getpermissionsNamesFunction(req: Request, res: Response) {
+  prisma.permission
     .findMany()
-    .then((accesses) => {
-      const unique = removeDuplicates(accesses.map((access) => access.name));
+    .then((permissions) => {
+      const unique = removeDuplicates(
+        permissions.map((permission) => permission.name)
+      );
       res.status(200).json(successResponse(unique));
     })
     .catch((err) => {

@@ -4,7 +4,7 @@ import "module-alias/register";
 import express from "express";
 import UserRoutes from "@/routes/UserRoutes";
 import RoleRoutes from "@/routes/RolesRoutes";
-import AccessesRoutes from "@/routes/AccessesRoutes";
+import permissionsRoutes from "@/routes/PermissionsRoutes";
 import prisma from "@/prisma";
 import cors from "cors";
 
@@ -32,4 +32,4 @@ if (prisma) {
 
 app.use("/user", UserRoutes);
 app.use("/role", RoleRoutes);
-app.use("/access", AccessesRoutes);
+app.use("/permission", permissionsRoutes);

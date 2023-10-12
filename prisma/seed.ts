@@ -1,5 +1,5 @@
 import { ActionNameType } from "@/types/ActionNameType";
-import { AccessesNamesType } from "../src/types/AccessesNamesType";
+import { PermissionNamesType } from "../src/types/PermissionNamesType";
 import { Prisma, PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
@@ -21,38 +21,47 @@ const actionsData: actionType[] = [
     value: 2,
   },
 ];
-const accessesNames: AccessesNamesType[] = ["access", "role", "user_data"];
+const permissionsNames: PermissionNamesType[] = [
+  "permission",
+  "role",
+  "user_data",
+];
 const actionValues = [0, 1, 2];
 
 function seedActions() {
   return new Promise((ressolve, reject) => {
     prisma.action
-      .createMany({ data: actionsData })
-      .then((result) => {
-        ressolve(result);
+      .deleteMany()
+      .then(() => {
+        prisma.action
+          .createMany({ data: actionsData })
+          .then((result) => {
+            ressolve(result);
+          })
+          .catch((err) => {
+            reject(err);
+          });
       })
-      .catch((err) => {
-        reject(err);
-      });
+      .catch(console.log);
   });
 }
-function seedAccesses() {
+function seedPermissions() {
   prisma.action
     .findMany()
     .then((actions) => {
       const actionIds = actions.map((action) => action.id);
-      const accessesData: Prisma.AccessCreateManyInput[] = [];
-      accessesNames.forEach((access) => {
+      const permissionsData: Prisma.PermissionCreateManyInput[] = [];
+      permissionsNames.forEach((permission) => {
         const tempArr = [];
         actionIds.forEach((actionId) => {
-          accessesData.push({ name: access, actionId });
+          permissionsData.push({ name: permission, actionId });
         });
       });
-      prisma.access
-        .createMany({ data: accessesData })
+      prisma.permission
+        .createMany({ data: permissionsData })
         .then(console.log)
         .catch(console.log);
     })
     .catch(console.log);
 }
-seedActions().then(seedAccesses);
+seedActions().then(seedPermissions);
