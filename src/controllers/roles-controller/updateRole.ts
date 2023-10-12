@@ -21,7 +21,7 @@ function updateRoleFunction(req: Request, res: Response) {
         },
       })
       .then((result) => {
-        res.json(result);
+        res.json(successResponse({ result }));
         console.log(result);
       })
       .catch((err) => {
@@ -29,7 +29,7 @@ function updateRoleFunction(req: Request, res: Response) {
         console.log(err);
       });
   } else {
-    res.json("enter calid inputs");
+    res.json(errorResponse(undefined, "Please Enter a valid data"));
   }
 }
 export { updateRoleFunction };
