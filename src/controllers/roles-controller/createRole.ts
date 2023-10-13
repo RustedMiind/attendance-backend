@@ -30,6 +30,8 @@ function createRoleFunction(req: Request, res: Response) {
       .catch((err) => {
         res.status(400).json(errorResponse(err));
       });
+  } else {
+    res.status(400).json(errorResponse(undefined, "Please Enter Valid Inputs"));
   }
 }
 export { createRoleFunction };

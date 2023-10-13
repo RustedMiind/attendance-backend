@@ -42,13 +42,17 @@ function checkIsUserWithCallback(
       callback(result);
     })
     .catch((err) => {
-      res.status(400).json(errorResponse(err, "No token found"));
+      res
+        .status(400)
+        .json(
+          errorResponse(err, "Token Validation Failed, Login again to proceed")
+        );
     });
 }
 
 function checkUser(token: string | undefined) {
   return new Promise<UserWithRoleResult>((ressolve, reject) => {
-    if (!token) return reject(errorResponse({}, "No token found"));
+    if (!token) return reject("No token found");
 
     let decode: { id: string } | undefined;
 
@@ -56,7 +60,7 @@ function checkUser(token: string | undefined) {
       decode = jwt.verify(token, process.env.SECRET_KEY as string) as {
         id: string;
       };
-      if (typeof decode === "object") {
+      if (typeof decode === "object" && decode.id) {
         prisma.userToken
           .findFirst({ where: { id: decode.id } })
           .then((userToken) => {
@@ -76,16 +80,20 @@ function checkUser(token: string | undefined) {
                   ressolve(user);
                 })
                 .catch((err) => {
-                  reject(err);
+                  reject("::test::");
                 });
             } else {
-              reject(userToken);
+              reject("userToken not fouund");
             }
           })
-          .catch(reject);
+          .catch((err) => {
+            reject("err");
+          });
+      } else {
+        reject("Token Decode not of type object");
       }
     } catch (err) {
-      reject(err);
+      reject("err::2::");
     }
   });
 }
