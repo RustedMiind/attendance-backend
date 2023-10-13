@@ -4,7 +4,9 @@ import prisma from "@/prisma";
 import { idsArrayToPermissionObj } from "./idsArrayToPermissionObj";
 import { checkIsUserWithCallback } from "@/middlewares/checkUser";
 import { removeDuplicates } from "@/functions/removeDuplicates";
-import { Permission, Prisma } from "@prisma/client";
+import { Prisma } from "@prisma/client";
+import { getNoPermissionTo } from "./functions/getNoPermissionTo";
+import CreateRolePromise from "./functions/createRolePromise";
 
 type PermissionIdType = number;
 
@@ -28,45 +30,16 @@ function createRoleFunction(req: Request, res: Response) {
             include: { action: true },
           })
           .then((resultPermissions) => {
-            if (permissions.length === resultPermissions.length) {
+            if (permissions.length === resultPermissions.length && user.role) {
               // If Requested permissions all found
               // res.json(resultPermissions);
-              const haveNoAccessTo: any[] = [];
-              resultPermissions.forEach((permissionToCheck) => {
-                let haveAccess = false;
-                // Conpare user roles to check if he has access to give the permission
-                user.role?.permissions.forEach((userPermission) => {
-                  if (
-                    permissionToCheck.action.name ===
-                      userPermission.action.name &&
-                    permissionToCheck.action.value <=
-                      userPermission.action.value
-                  ) {
-                    haveAccess = true;
-                  }
-                });
-                if (!haveAccess) {
-                  haveNoAccessTo.push(permissionToCheck);
-                }
-              });
-              if (haveNoAccessTo.length === 0) {
+              const noPermissionTo = getNoPermissionTo(
+                user.role.permissions,
+                resultPermissions
+              );
+              if (noPermissionTo.length === 0) {
                 //  Here he can Create the role needed
-                prisma.role
-                  .create({
-                    data: {
-                      name,
-                      permissions: {
-                        connect: resultPermissions,
-                      },
-                    },
-                    include: {
-                      permissions: {
-                        include: {
-                          action: { select: { value: true, name: true } },
-                        },
-                      },
-                    },
-                  })
+                CreateRolePromise({ name, resultPermissions })
                   .then((result) => {
                     res.status(200).json(successResponse(result));
                   })
@@ -77,7 +50,7 @@ function createRoleFunction(req: Request, res: Response) {
                 res.status(402).json(
                   errorResponse(
                     {
-                      permissionDenied: haveNoAccessTo,
+                      permissionDenied: noPermissionTo,
                     },
                     "Some Permissions the user doesn't have access to give"
                   )
@@ -107,28 +80,9 @@ function createRoleFunction(req: Request, res: Response) {
           });
       }
     });
-    // prisma.role
-    //   .create({
-    //     data: {
-    //       name,
-    //       permissions: {
-    //         connect: idsArrayToPermissionObj(permissions),
-    //       },
-    //     },
-    //     include: {
-    //       permissions: {
-    //         include: { action: { select: { value: true, name: true } } },
-    //       },
-    //     },
-    //   })
-    //   .then((result) => {
-    //     res.status(200).json(successResponse(result));
-    //   })
-    //   .catch((err) => {
-    //     res.status(400).json(errorResponse(err));
-    //   });
   } else {
     res.status(401).json(errorResponse(undefined, "Please Enter Valid Inputs"));
   }
 }
+
 export { createRoleFunction };
