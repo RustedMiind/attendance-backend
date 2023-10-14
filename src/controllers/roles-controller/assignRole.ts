@@ -4,6 +4,8 @@ import prisma from "@/prisma";
 import { checkIsUserWithCallback } from "@/middlewares/checkUser";
 import { getNoPermissionTo } from "./functions/getNoPermissionTo";
 import { Prisma } from "@prisma/client";
+import excludePassword from "@/functions/excludePassword";
+import { includeRoleToAction, includeUserToAction } from "@/statics/includes";
 
 const assignRoleFunction = (req: Request, res: Response) => {
   const body = req.body;
@@ -14,7 +16,7 @@ const assignRoleFunction = (req: Request, res: Response) => {
     prisma.user
       .findUnique({
         where: { id: userId },
-        include: { role: { include: { permissions: true } } },
+        ...includeUserToAction,
       })
       .then((userToAssign) => {
         if (userToAssign) {
@@ -22,7 +24,7 @@ const assignRoleFunction = (req: Request, res: Response) => {
             prisma.role
               .findUnique({
                 where: { id: roleId },
-                include: { permissions: { include: { action: true } } },
+                ...includeRoleToAction,
               })
               .then((role) => {
                 if (role && requester && requester.role) {
@@ -37,16 +39,14 @@ const assignRoleFunction = (req: Request, res: Response) => {
                       .update({
                         where: { id: userId },
                         data: { roleId: role.id },
+                        ...includeUserToAction,
                       })
                       .then((user) => {
-                        res.status(200).json(
-                          successResponse({
-                            user,
-                            requester,
-                            role,
-                            haveNoPermissionTo,
-                          })
-                        );
+                        res
+                          .status(200)
+                          .json(
+                            successResponse({ user: excludePassword(user) })
+                          );
                       })
                       .catch((err) => {
                         res.status(402).json(errorResponse(err));
@@ -81,16 +81,11 @@ const assignRoleFunction = (req: Request, res: Response) => {
           res.status(404).json(errorResponse(undefined, "User not found"));
         }
       })
-      .catch(() => {});
+      .catch((err) => {
+        // Do nothing
+        console.log(err);
+      });
   });
-  // prisma.user
-  //   .update({ where: { id: userId }, data: { roleId } })
-  //   .then((user) => {
-  //     res.status(200).json(successResponse(user));
-  //   })
-  //   .catch((err) => {
-  //     res.status(402).json(errorResponse(err));
-  //   });
 };
 
 export default assignRoleFunction;
