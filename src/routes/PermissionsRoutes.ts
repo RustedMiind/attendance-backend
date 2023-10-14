@@ -10,7 +10,7 @@ router.get(
   controller.getpermissionsNames
 );
 router.get(
-  "/lte",
+  "/togive",
   checkpermission("permission", 1),
   controller.getPermissionsUserCanGive
 );

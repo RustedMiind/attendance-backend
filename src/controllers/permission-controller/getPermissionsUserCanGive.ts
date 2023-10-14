@@ -26,7 +26,7 @@ function getPermissionsUserCanGiveFunction(req: Request, res: Response) {
         .findMany(query)
 
         .then((permissions) => {
-          res.status(200).json(successResponse({ permissions, query }));
+          res.status(200).json(successResponse(permissions));
         })
         .catch((err) => {
           res.status(401).json(errorResponse(err));
