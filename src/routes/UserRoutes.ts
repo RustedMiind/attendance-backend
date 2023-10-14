@@ -9,7 +9,6 @@ const router = express.Router();
 router.post("/new", userController.createNewUser);
 router.post("/login", userController.login);
 router.get("/check", userController.checkUserByToken);
-router.post("/role/assign", userController.assignRole);
 router.post(
   "/test",
   checkpermission("role", 1),
