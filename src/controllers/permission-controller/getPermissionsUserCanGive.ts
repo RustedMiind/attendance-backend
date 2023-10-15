@@ -45,6 +45,14 @@ function getPermissionsUserCanGiveFunction(req: Request, res: Response) {
               });
             }
           });
+          for (let i = 0; i < compressedPermissions.length; ) {
+            const p = compressedPermissions[i];
+            if (p.actions.length <= 1) {
+              compressedPermissions.pop();
+            } else {
+              i++;
+            }
+          }
 
           res
             .status(200)
