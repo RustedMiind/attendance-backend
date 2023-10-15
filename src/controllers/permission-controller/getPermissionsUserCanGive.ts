@@ -7,13 +7,14 @@ import { Prisma } from "@prisma/client";
 
 function getPermissionsUserCanGiveFunction(req: Request, res: Response) {
   checkIsUserWithCallback(req, res, (user) => {
+    console.log(user);
     if (
       user &&
       user.role &&
       user.role.permissions &&
       Array.isArray(user.role.permissions)
     ) {
-      const query: Prisma.PermissionFindManyArgs = {
+      const query = {
         where: {
           OR: user.role.permissions.map((uPermission) => ({
             name: uPermission.name,
@@ -26,15 +27,41 @@ function getPermissionsUserCanGiveFunction(req: Request, res: Response) {
         .findMany(query)
 
         .then((permissions) => {
-          res.status(200).json(successResponse(permissions));
+          const compressedPermissions: CompressedPermissionType[] = [];
+          permissions.forEach((p) => {
+            const compressedNames: string[] = compressedPermissions.map(
+              (p) => p.name
+            );
+            if (compressedNames.includes(p.name)) {
+              compressedPermissions.forEach((cp) => {
+                if (cp.name === p.name) {
+                  cp.actions.push({ name: p.action.name, permissionId: p.id });
+                }
+              });
+            } else {
+              compressedPermissions.push({
+                name: p.name,
+                actions: [{ name: p.action.name, permissionId: p.id }],
+              });
+            }
+          });
+
+          res
+            .status(200)
+            .json(successResponse({ permissions, compressedPermissions }));
         })
         .catch((err) => {
           res.status(401).json(errorResponse(err));
         });
     } else {
-      res.json("nigga");
+      res.status(403).json(errorResponse(undefined, "Not a user"));
     }
   });
 }
+
+type CompressedPermissionType = {
+  name: string;
+  actions: { name: string; permissionId: number }[];
+};
 
 export default getPermissionsUserCanGiveFunction;

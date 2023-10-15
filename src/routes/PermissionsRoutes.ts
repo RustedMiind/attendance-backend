@@ -11,7 +11,7 @@ router.get(
 );
 router.get(
   "/togive",
-  checkpermission("permission", 1),
+  checkpermission("permission", 0),
   controller.getPermissionsUserCanGive
 );
 
