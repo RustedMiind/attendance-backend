@@ -1,5 +1,11 @@
 import { Prisma } from "@prisma/client";
 
+/*
+Issue Found,
+If the user have two same permissions with different action values
+the comparision will return that the lower value means that the user doesnt have access to it 
+*/
+
 export function getNoPermissionTo(
   userPermissions: PermissionType[],
   permissionsToCheck: PermissionType[]
