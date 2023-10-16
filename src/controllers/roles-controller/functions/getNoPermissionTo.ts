@@ -11,22 +11,22 @@ export function getNoPermissionTo(
   permissionsToCheck: PermissionType[]
 ): PermissionType[] {
   const noPermissionTo: any[] = [];
-  userPermissions.forEach((permissionToCheck) => {
+  permissionsToCheck.forEach((permissionToCheck) => {
     let haveAccess = false;
     // Conpare user roles to check if he has access to give the permission
-    permissionsToCheck.forEach((userPermission) => {
-      // console.log(
-      //   `${permissionToCheck.action.value} <= ${
-      //     userPermission.action.value
-      //   } : ${permissionToCheck.action.value <= userPermission.action.value}`,
-      //   `
-      //     ${permissionToCheck.action.name} === ${
-      //     userPermission.action.name
-      //   } : ${permissionToCheck.action.name === userPermission.action.name}
-      //   `
-      // );
+    userPermissions.forEach((userPermission) => {
+      console.log(
+        `${permissionToCheck.action.value} <= ${
+          userPermission.action.value
+        } : ${permissionToCheck.action.value <= userPermission.action.value}`,
+        `
+          ${permissionToCheck.action.name} === ${
+          userPermission.action.name
+        } : ${permissionToCheck.action.name === userPermission.action.name}
+        `
+      );
       if (
-        permissionToCheck.action.name === userPermission.action.name &&
+        permissionToCheck.name === userPermission.name &&
         permissionToCheck.action.value <= userPermission.action.value
       ) {
         haveAccess = true;
