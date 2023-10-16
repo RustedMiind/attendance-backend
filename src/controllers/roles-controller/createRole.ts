@@ -11,8 +11,8 @@ import CreateRolePromise from "./functions/createRolePromise";
 type PermissionIdType = number;
 
 function createRoleFunction(req: Request, res: Response) {
-  const name: string | null = req.body.name,
-    permissions: PermissionIdType[] | null = removeDuplicates(
+  const name: string | undefined = req.body.name,
+    permissions: PermissionIdType[] | undefined = removeDuplicates(
       req.body.permissions
     );
 
@@ -37,17 +37,25 @@ function createRoleFunction(req: Request, res: Response) {
                 user.role.permissions,
                 resultPermissions
               );
+              console.log(noPermissionTo);
               if (noPermissionTo.length === 0) {
                 //  Here he can Create the role needed
                 CreateRolePromise({ name, resultPermissions })
                   .then((result) => {
-                    res.status(200).json(successResponse(result));
+                    prisma.role
+                      .findMany()
+                      .then((roles) => {
+                        res.status(200).json(successResponse(roles));
+                      })
+                      .catch(() => {
+                        res.status(200).json(successResponse([]));
+                      });
                   })
                   .catch((err) => {
                     res.status(400).json(errorResponse(err));
                   });
               } else {
-                res.status(402).json(
+                res.status(401).json(
                   errorResponse(
                     {
                       permissionDenied: noPermissionTo,
