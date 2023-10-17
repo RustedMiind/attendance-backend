@@ -7,6 +7,7 @@ import { removeDuplicates } from "@/functions/removeDuplicates";
 import { Prisma } from "@prisma/client";
 import { getNoPermissionTo } from "./functions/getNoPermissionTo";
 import CreateRolePromise from "./functions/createRolePromise";
+import { includeRoleToAction } from "@/statics/includes";
 
 type PermissionIdType = number;
 
@@ -43,7 +44,7 @@ function createRoleFunction(req: Request, res: Response) {
                 CreateRolePromise({ name, resultPermissions })
                   .then((result) => {
                     prisma.role
-                      .findMany()
+                      .findMany(includeRoleToAction)
                       .then((roles) => {
                         res.status(200).json(successResponse(roles));
                       })
